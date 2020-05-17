@@ -369,24 +369,27 @@ polynomial_div (polynomial * dividend, polynomial * divisor,
 
   	linkedlist_get(dividend,0,&t_dividend);
   	linkedlist_get(divisor,0,&t_divisor);
+	if(t_dividend.expo < t_divisor.expo){
+      		* remainder = linkedlist_clone(dividend);
+    	}		
 
 	while(t_divisor.expo<=t_dividend.expo){
 		t.coef = t_dividend.coef / t_divisor.coef;
 		t.expo = t_dividend.expo - t_divisor.expo;
 		if(t.coef != 0) polynomial_add_term(*quotient,&t);
     
-    polynomial * cloned_dividend = linkedlist_clone(
-		polynomial_subt(dividend,polynomial_mult(divisor,*quotient)));
+		polynomial * cloned_dividend = linkedlist_clone(
+			polynomial_subt(dividend,polynomial_mult(divisor,*quotient)));
 
-    linkedlist_get(cloned_dividend,0,&t_dividend);
-    if(linkedlist_length(cloned_dividend) == 0) t_dividend.coef = 0;
-    linkedlist_get(divisor,0,&t_divisor);
-    linkedlist_free(cloned_dividend);
+		linkedlist_get(cloned_dividend,0,&t_dividend);
+		linkedlist_get(divisor,0,&t_divisor);
+
+		if(t_dividend.expo < t_divisor.expo){
+			* remainder = linkedlist_clone(cloned_dividend);
+		}
+		
+		linkedlist_free(cloned_dividend);
 	}
-
-	t.coef = t_dividend.coef;
-	t.expo = t_dividend.expo;
-	if(t.coef != 0) polynomial_add_term(*remainder,&t);
 }
 
 /* Main */
